@@ -32,16 +32,23 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
-      - name: Terraform Plan
-        id: plan
+      - name: Terraform Plan Staging
+        id: stg-plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
+        run: terraform plan -var-file=tfvars/stg.tfvars -no-color -input=false
+        continue-on-error: true
+      
+      - name: Terraform Plan Production
+        id: prd-plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -var-file=tfvars/prd.tfvars -no-color -input=false
         continue-on-error: true
 
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          STG_PLAN: "terraform\n${{ steps.stg-plan.outputs.stdout }}"
+          PRD_PLAN: "terraform\n${{ steps.prd-plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -50,10 +57,18 @@ jobs:
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            <details><summary>Show Plan</summary>
+            <details><summary>Show Staging Plan</summary>
 
             \`\`\`\n
-            ${process.env.PLAN}
+            ${process.env.STG_PLAN}
+            \`\`\`
+
+            </details>
+
+            <details><summary>Show Production Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PRD_PLAN}
             \`\`\`
 
             </details>
@@ -68,9 +83,13 @@ jobs:
             })
 
       - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
+        if: steps.stg-plan.outcome == 'failure' || steps.prd-plan.outcome == 'failure'
         run: exit 1
 
-      - name: Terraform Apply
+      - name: Terraform Apply Staging
+        if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+        run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
+
+      - name: Terraform Apply Production
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -var-file=tfvars/prd.tfvars -auto-approve -input=false
