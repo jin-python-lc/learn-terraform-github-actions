@@ -28,7 +28,7 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
+        run: ls -l; terraform fmt -check
         working-directory: ./${{ env.PROJECT_NAME }}
 
       - name: Terraform Init
