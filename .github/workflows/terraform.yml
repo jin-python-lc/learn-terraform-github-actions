@@ -16,10 +16,10 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        if: |
-          contains(steps.changed-files.outputs.all_changed_files, '*/※.tf*') ||
-          contains(steps.changed-files.outputs.all_changed_files, '.github/workflows/*.yml')
         uses: tj-actions/changed-files@v32
+        with:
+          files: |
+            */※.tf* || .github/workflows/*.yml
 
       - name: List all changed files
         run: |
