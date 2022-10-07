@@ -10,7 +10,7 @@ on:
       - "!README.md" 
 
 env:
-  project_name: project3
+  PROJECT_NAME: project3
 
 jobs:
   terraform:
@@ -28,24 +28,24 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
-        working-directory: ./${{ env.project_name }}
+        run: ls -l; terraform fmt -check
+        working-directory: ./${{ env.PROJECT_NAME }}
 
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: ./${{ env.name_dev }}
+        working-directory: ./${{ env.PROJECT_NAME }}
       
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: ./${{ env.name_dev }}
+        working-directory: ./${{ env.PROJECT_NAME }}
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
-        working-directory: ./${{ env.name_dev }}
+        working-directory: ./${{ env.PROJECT_NAME }}
         continue-on-error: true
 
       - uses: actions/github-script@v6
@@ -60,7 +60,7 @@ jobs:
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            <details><summary>Show Plan ${{ env.project_name }}</summary>
+            <details><summary>Show Plan ${{ env.PROJECT_NAME }}</summary>
 
             \`\`\`\n
             ${process.env.PLAN}
@@ -84,4 +84,4 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
-        working-directory: ./${{ env.name_dev }}
+        working-directory: ./${{ env.PROJECT_NAME }}
