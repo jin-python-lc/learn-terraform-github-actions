@@ -17,15 +17,13 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v32
-        with:
-          files: |
-            '*/*.tf*' || ''.github/workflows/*.yml'
 
-      - name: Run step if any file(s) in the docs folder change
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
+      - name: List all changed files
         run: |
-          echo "One or more files in the docs folder has changed."
-          echo "List all the files that have changed: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ $file =~ '*/*.tf*' -o $file =~ '.github/workflows/*.yml' ]]; then
+              echo "$file was changed"
+          done
         
 
       - name: Setup Terraform
