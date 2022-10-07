@@ -10,7 +10,7 @@ on:
       - "!README.md" 
 
 env:
-  project_name: project1
+  PROJECT_NAME: project1
 
 jobs:
   terraform:
@@ -29,7 +29,7 @@ jobs:
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
-        working-directory: ./${{ env.project_name }}
+        working-directory: ./${{ env.PROJECT_NAME }}
 
       - name: Terraform Init
         id: init
@@ -60,7 +60,7 @@ jobs:
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            <details><summary>Show Plan ${{ env.project_name }}</summary>
+            <details><summary>Show Plan ${{ env.PROJECT_NAME }}</summary>
 
             \`\`\`\n
             ${process.env.PLAN}
