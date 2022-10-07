@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     paths:
-      - "project1/**.tf*"
+      - "project1/**.tf"
       - "!README.md" 
 
 jobs:
