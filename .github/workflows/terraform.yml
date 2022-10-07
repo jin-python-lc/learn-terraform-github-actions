@@ -19,7 +19,7 @@ jobs:
         uses: tj-actions/changed-files@v32
         with:
           files: |
-            */※.tf* || .github/workflows/*.yml
+            */*.tf* || .github/workflows/*.yml
 
       - name: List all changed files
         run: |
