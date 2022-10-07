@@ -6,8 +6,11 @@ on:
       - main
   pull_request:
     paths:
-      - "project1/**.tf"
+      - "project2/**.tf"
       - "!README.md" 
+
+env:
+  project_name: project2
 
 jobs:
   terraform:
@@ -26,23 +29,23 @@ jobs:
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
-        working-directory: ./project1
+        working-directory: ./${{ env.project_name }}
 
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: ./project1
+        working-directory: ./${{ env.name_dev }}
       
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: ./project1
+        working-directory: ./${{ env.name_dev }}
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
-        working-directory: ./project1
+        working-directory: ./${{ env.name_dev }}
         continue-on-error: true
 
       - uses: actions/github-script@v6
@@ -57,7 +60,7 @@ jobs:
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            <details><summary>Show Plan</summary>
+            <details><summary>Show Plan ${{ env.project_name }}</summary>
 
             \`\`\`\n
             ${process.env.PLAN}
@@ -81,4 +84,4 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
-        working-directory: ./project1
+        working-directory: ./${{ env.name_dev }}
