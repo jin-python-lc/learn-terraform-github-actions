@@ -21,7 +21,7 @@ jobs:
       - name: List all changed files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            if [[ $file =~ '*/*.tf*' -o $file =~ '.github/workflows/*.yml' ]]; then
+            if [ $file =~ '*/*.tf*' || $file =~ '.github/workflows/*.yml' ]; then
               echo "$file was changed"
           done
         
