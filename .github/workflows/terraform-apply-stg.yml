@@ -24,7 +24,7 @@ jobs:
 
       - name: Terraform Apply Staging
         id: stg-apply
-        run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
+        run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -no-color -input=false
 
       - uses: actions/github-script@v6
         env:
