@@ -1,13 +1,16 @@
 name: "Terraform Apply to Staging"
 
 on:
-  push:
-    branches: release/staging
+  pull_request:
+    branches:
+      - release/staging
+    types: [closed]
 
 jobs:
   terraform:
     name: "Terraform Apply to Staging"
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
