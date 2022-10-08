@@ -19,5 +19,4 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Apply Staging
-        if: github.ref == 'refs/heads/releases/staging' && github.event_name == 'push'
         run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
