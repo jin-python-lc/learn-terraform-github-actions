@@ -33,7 +33,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `
-            <details><summary>Show production Apply</summary>
+            <details><summary>Show Production Apply</summary>
 
             \`\`\`\n
             ${process.env.PRD_APPLY}
