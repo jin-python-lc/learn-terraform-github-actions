@@ -1,12 +1,12 @@
-name: "Terraform Apply to Staging"
+name: "Terraform Destroy"
 
 on:
   push:
-    branches: release/staging
+    branches: destroy
 
 jobs:
   terraform:
-    name: "Terraform Apply to Staging"
+    name: "Terraform Destroy"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,5 +22,5 @@ jobs:
         id: init
         run: terraform init
 
-      - name: Terraform Apply Staging
-        run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
+      - name: Terraform Destroy Staging
+        run: terraform destroy -var-file=tfvars/stg.tfvars -auto-approve -input=false
