@@ -1,0 +1,52 @@
+name: "Terraform Apply to Production"
+
+on:
+  push:
+    branches: main
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Apply production
+        id: prd-apply
+        run: terraform apply -var-file=tfvars/prd.tfvars -auto-approve -input=false
+
+      - uses: actions/github-script@v6
+        env:
+          PRD_APPLY: "terraform\n${{ steps.prd-apply.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `
+            <details><summary>Show production Apply</summary>
+
+            \`\`\`\n
+            ${process.env.PRD_APPLY}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+            
