@@ -3,7 +3,7 @@ name: "Terraform"
 on:
   pull_request:
     branches:
-      - releases/staging
+      - staging
 
 jobs:
   terraform:
