@@ -1,4 +1,4 @@
-name: "Terraform"
+name: "Terraform Plan for STG/PRD"
 
 on:
   pull_request:
@@ -25,7 +25,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init; ls -l
+        run: terraform init
       
       - name: Terraform Validate
         id: validate

@@ -1,4 +1,4 @@
-name: "Terraform"
+name: "Terraform Apply to Staging"
 
 on:
   push:
@@ -17,6 +17,10 @@ jobs:
         with:
           # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
 
       - name: Terraform Apply Staging
         run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
