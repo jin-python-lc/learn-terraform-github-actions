@@ -87,9 +87,36 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply Staging
+        id: stg-apply
         if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
         run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
 
       - name: Terraform Apply Production
+        id: prd-apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -var-file=tfvars/prd.tfvars -auto-approve -input=false
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          STG_APPLY: "terraform\n${{ steps.stg-apply.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `
+            <details><summary>Show Staging Apply</summary>
+
+            \`\`\`\n
+            ${process.env.STG_APPLY}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
