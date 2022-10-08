@@ -1,9 +1,6 @@
 name: "Terraform"
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 jobs:
@@ -85,11 +82,3 @@ jobs:
       - name: Terraform Plan Status
         if: steps.stg-plan.outcome == 'failure' || steps.prd-plan.outcome == 'failure'
         run: exit 1
-
-      - name: Terraform Apply Staging
-        if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
-        run: terraform apply -var-file=tfvars/stg.tfvars -auto-approve -input=false
-
-      - name: Terraform Apply Production
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -var-file=tfvars/prd.tfvars -auto-approve -input=false
